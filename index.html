@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Feliz Cumpleaños, Paotiva</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: black;
+      color: white;
+      font-family: 'Georgia', serif;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    .fondo-corazones {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .corazon {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: pink;
+      animation: flotar 10s linear infinite;
+      clip-path: polygon(50% 0%, 61% 13%, 75% 13%, 86% 25%, 86% 39%, 75% 50%, 50% 75%, 25% 50%, 14% 39%, 14% 25%, 25% 13%, 39% 13%);
+      opacity: 0.6;
+    }
+
+    @keyframes flotar {
+      0% {
+        transform: translateY(100vh) scale(1);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-10vh) scale(1.2);
+        opacity: 0;
+      }
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+      font-size: 1.5rem;
+      color: #ff99cc;
+      z-index: 2;
+      position: relative;
+    }
+
+    .image-container {
+      position: relative;
+      z-index: 2;
+      width: 90vw;
+      max-width: 600px;
+      height: 65vh;
+      margin: 0 auto;
+      border: 4px solid white;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #111;
+      box-shadow: 0 0 15px rgba(255,255,255,0.3);
+    }
+
+    .image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      animation: fade 1s ease-in-out;
+    }
+
+    @keyframes fade {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    button {
+      background-color: white;
+      color: black;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 15px;
+      z-index: 2;
+      position: relative;
+    }
+
+    .credit {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      opacity: 0.5;
+      z-index: 2;
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="fondo-corazones" id="fondo-corazones"></div>
+
+  <header>💖 Feliz cumpleaños, mi Pao 💖</header>
+
+  <div class="image-container">
+    <img id="carrusel" src="foto1.jpg" alt="Recuerdo">
+  </div>
+
+  <audio id="cancion" preload="auto">
+    <source src="audio.mp3" type="audio/mpeg">
+    Tu navegador no soporta audio HTML5.
+  </audio>
+
+  <button id="audioButton">⏸️ Pausar música</button>
+  <div class="credit">Con amor, desde Moscú hasta Lima</div>
+
+  <script>
+    const imagenes = [
+      "foto1.jpg",
+      "foto2.jpg",
+      "foto3.jpg",
+      "foto4.jpg",
+      "foto5.jpg"
+    ];
+
+    const img = document.getElementById("carrusel");
+    let indice = 0;
+
+    setInterval(() => {
+      indice = (indice + 1) % imagenes.length;
+      img.src = imagenes[indice];
+    }, 4000);
+
+    const audio = document.getElementById("cancion");
+    const btn = document.getElementById("audioButton");
+    let reproduciendo = true;
+
+    // Truco para autoplay silencioso + luego subir volumen
+    document.addEventListener("DOMContentLoaded", () => {
+      audio.volume = 0; // volumen 0 para permitir autoplay
+      const playPromise = audio.play();
+
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          setTimeout(() => {
+            audio.volume = 0.9; // sube volumen tras 1 segundo
+          }, 1000);
+        }).catch(() => {
+          // El navegador bloqueó autoplay, dejar botón activo
+          reproduciendo = false;
+          btn.textContent = "▶️ Reproducir música";
+        });
+      }
+    });
+
+    btn.addEventListener("click", () => {
+      if (reproduciendo) {
+        audio.pause();
+        btn.textContent = "▶️ Reproducir música";
+        reproduciendo = false;
+      } else {
+        audio.play();
+        btn.textContent = "⏸️ Pausar música";
+        reproduciendo = true;
+      }
+    });
+
+    // Corazones flotantes
+    const fondo = document.getElementById("fondo-corazones");
+    function crearCorazon() {
+      const corazon = document.createElement("div");
+      corazon.classList.add("corazon");
+      corazon.style.left = Math.random() * 100 + "vw";
+      corazon.style.animationDuration = (6 + Math.random() * 4) + "s";
+      fondo.appendChild(corazon);
+      setTimeout(() => corazon.remove(), 10000);
+    }
+    setInterval(crearCorazon, 300);
+  </script>
+
+</body>
+</html>
